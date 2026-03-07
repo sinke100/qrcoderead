@@ -9,6 +9,7 @@ WORKDIR /app
 # System packages needed for pyzbar / zbar
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libzbar0 \
+    libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
