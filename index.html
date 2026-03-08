@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QR code reader</title>
+<style>
+    body {
+      background-color: #24364b;
+      color: #f3e0be;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+     /* justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;*/
+    }
+#spinner {
+  width: 40px; /* Adjust size as needed */
+  height: 40px; /* Adjust size as needed */
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #ffac40;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-top: 20px;
+      color: #ffac40;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+
+    button {
+      background-color: #ffac40;
+      color: #24364b;
+      border: none;
+border-radius:0.5rem;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #res {
+      text-align: center;
+    }
+a {
+all:unset;
+font-size: 24px;
+      margin-top: 20px;
+      color: #ffac40;
+cursor: pointer;
+}
+  </style>
+</head>
+<body>
+  <h1>QR code reader</h1>
+  
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="image" accept=".png">
+    <button type="submit">Upload</button>
+  </form>
+<div id='res'></div>
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var formData = new FormData(this);
+const res = document.getElementById('res')
+res.innerHTML = "<div id='spinner'></div>";
+      fetch('/translate', {
+        method: 'POST',
+        body: formData
+      })
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
+        return response.text();
+      })
+      .then(function(data) {
+ if (data.startsWith('http')) {
+    res.innerHTML = `<a href="${data}" target="_blank">${data}</a>`;
+  } else {
+    res.innerHTML = `<h2>${data}</h2>`;
+  }
+      })
+      .catch(function(error) {
+res.innerHTML = `<h2>${error}</h2>`;
+      });
+    });
+  </script>
+</body>
+</html>
