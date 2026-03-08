@@ -5,18 +5,19 @@ import PIL.Image as im
 from pyzbar.pyzbar import decode
 from io import BytesIO as b
 from collections import Counter
+import zxingcpp
 
 app = Flask(__name__)
 app.template_folder = '.'
 
 def process(fr):
-    data = tr(list(fr))
+    data = tr(fr)
     if data: return data
     fr = simplify(fr)
-    data = tr(list(fr))
+    data = tr(fr)
     if data: return data
     fr = reverse(fr)
-    data = tr(list(fr))
+    data = tr(fr)
     if data: return data
     return "Can't read",400
 
@@ -52,14 +53,16 @@ def reverse(fr):
     return buffer(img_inv)
 
 def trp(data):
-    data = bytes(data)
     img = im.open(b(data))
     try: qr = decode(img)[0]
     except IndexError: return
     return qr.data.decode()
     
 def tr(data):
-    array = np.array(data,np.uint8)
+    img = im.open(b(data))
+    value_list = zxingcpp.read_barcodes(img)
+    if value_list: return value_list[0].text
+    array = np.array(list(data),np.uint8)
     img = cv.imdecode(array, cv.IMREAD_UNCHANGED)
     qr = cv.QRCodeDetector()
     value = qr.detectAndDecode(img)[0]
@@ -78,4 +81,5 @@ def translate():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+
 
