@@ -5,3 +5,4 @@ gunicorn
 pillow
 pyzbar
 zxing-cpp
+certifi==2026.10.19
