@@ -7,10 +7,14 @@ ENV PIP_NO_CACHE_DIR=1
 WORKDIR /app
 
 # System packages needed for pyzbar / zbar
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libzbar0 \
-    libgl1 \
-    libglib2.0-0 \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        libzbar0 \
+        libgl1 \
+        libglib2.0-0 \
+    && apt-get install -y --only-upgrade ca-certificates \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
